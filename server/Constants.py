@@ -1,0 +1,13 @@
+TABLE_USERS = "users"
+USERS_COLUMN_ID = "id"
+USERS_COLUMN_USERNAME = "username"
+USERS_COLUMN_PASSWORD = "password"
+
+TABLE_GROUPS = "groups"
+GROUPS_COLUMN_ID = "id"
+GROUPS_COLUMN_NAME = "name"
+
+TABLE_USERS_FRIEND = "users_friend"
+USERS_COLUMN_ID = "id"
+USERS_COLUMN_USERNAME = "username"
+USERS_COLUMN_PASSWORD = "password"
