@@ -74,9 +74,9 @@ public class ChatReceiver {
             routingKey = key;
             exchangeName = name;
 
-            if (type == "topic") {
+            if (type.equals("topic")) {
                 channel.exchangeDeclare(exchangeName, "topic");
-            } else if (type == "direct") {
+            } else if (type.equals("direct")) {
                 channel.exchangeDeclare(exchangeName, "direct");
             }
 

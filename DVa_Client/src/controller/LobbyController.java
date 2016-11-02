@@ -215,7 +215,7 @@ public class LobbyController implements Initializable {
             request.put("username", Context.getInstance().currentUser().getUsername());
 
             JSONObject response = client.call(request);
-            if(response.get("status") == "ok"){
+            if(response.get("status").equals("ok")){
                 Platform.runLater(() -> {
                     JSONArray list = new JSONArray();
                     ArrayList<String> responseGroupList = (JSONArray) response.get("groups");
@@ -241,7 +241,7 @@ public class LobbyController implements Initializable {
             request.put("username", Context.getInstance().currentUser().getUsername());
 
             JSONObject response = client.call(request);
-            if(response.get("status") == "ok"){
+            if(response.get("status").equals("ok")){
                 Platform.runLater(() -> {
                     ArrayList<String> responseFriendList = (JSONArray) response.get("friends");
                     Context.getInstance().currentUser().setFriendList(responseFriendList);

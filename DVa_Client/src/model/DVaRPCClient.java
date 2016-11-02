@@ -40,6 +40,7 @@ public class DVaRPCClient {
                 .replyTo(replyQueueName)
                 .build();
 
+        System.out.println(message.toJSONString());
         channel.basicPublish("", requestQueueName, props, message.toJSONString().getBytes());
 
         while (true) {

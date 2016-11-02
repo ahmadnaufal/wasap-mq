@@ -107,9 +107,9 @@ public class GroupChatController implements Initializable {
     {
         // Create a Runnable
         Runnable task = null;
-        if (type == "get_members") {
+        if (type.equals("get_members")) {
             task = () -> runGetMemberTask();
-        } else if (type == "add_member"){
+        } else if (type.equals("add_member")){
             task = () -> runAddMemberTask();
         }
 
@@ -130,7 +130,7 @@ public class GroupChatController implements Initializable {
             request.put("username", Context.getInstance().currentUser().getUsername());
 
             JSONObject response = client.call(request);
-            if(response.get("status") == "ok"){
+            if(response.get("status").equals("ok")){
                 Platform.runLater(() -> {
                     ArrayList<String> responseMemberList = (JSONArray) response.get("members");
                     oMemberList =  FXCollections.observableArrayList(responseMemberList);
@@ -157,7 +157,7 @@ public class GroupChatController implements Initializable {
             request.put("member", memberName);
 
             JSONObject response = client.call(request);
-            if(response.get("status") == "ok"){
+            if(response.get("status").equals("ok")){
                 Platform.runLater(() -> {
                     oMemberList.add(memberName);
                 });
