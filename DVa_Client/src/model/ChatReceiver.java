@@ -90,19 +90,8 @@ public class ChatReceiver {
         }
     }
 
-//    public void startConsume() throws Exception {
-//
-//        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-//        Consumer consumer = new DefaultConsumer(channel) {
-//            @Override
-//            public void handleDelivery(String consumerTag, Envelope envelope,
-//                                       AMQP.BasicProperties properties, byte[] body) throws IOException {
-//                String message = new String(body, "UTF-8");
-//                messages.add(message);
-//                System.out.println(" [x] Received '" + message + "'");
-//            }
-//        };
-//        channel.basicConsume(queueName, true, consumer);
-//    }
+    public void close() throws Exception {
+        connection.close();
+    }
 
 }

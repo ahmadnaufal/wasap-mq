@@ -3,25 +3,23 @@ package controller;
 /**
  * Created by Julio Savigny on 11/1/2016.
  */
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import model.ChatReceiver;
 import model.Context;
 import model.DVaRPCClient;
-import model.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -65,6 +63,9 @@ public class LobbyController implements Initializable {
     @FXML
     private TextField addFriendField;
 
+    @FXML
+    private TextArea notifBar;
+
     private ObservableList<String> oGroupList;
     private ObservableList<String> oFriendList;
 
@@ -86,7 +87,7 @@ public class LobbyController implements Initializable {
         try {
             Platform.runLater(() -> {
                 try {
-                    //receiver.startConsume();
+                    startConsumeNotif(receiver);
                 } catch (Exception exc) {
                     exc.printStackTrace();
                 }
@@ -257,6 +258,21 @@ public class LobbyController implements Initializable {
         oFriendList = FXCollections.observableArrayList(Context.getInstance().currentUser().getFriendList());
     }
 
+    public void startConsumeNotif(ChatReceiver chatReceiver) throws Exception {
+
+        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+        Consumer consumer = new DefaultConsumer(chatReceiver.getChannel()) {
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope,
+                                       AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String message = new String(body, "UTF-8");
+                notifBar.appendText("New Message From : "+message+"\n");
+                System.out.println(" [x] Received '" + message + "'");
+            }
+        };
+        chatReceiver.getChannel().basicConsume(chatReceiver.getQueueName(), true, consumer);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Handle Create group, add friend, left group (RPC)
@@ -269,7 +285,8 @@ public class LobbyController implements Initializable {
         friendList.setItems(oFriendList);
         groupList.setItems(oGroupList);
 
-        ChatReceiver notifReceiver = new ChatReceiver("localhost", "direct", "notification"+"."+ Context.getInstance().currentUser().getUsername(), "notification_exchange");
+        ChatReceiver notifReceiver = new ChatReceiver("localhost", "topic", "notif.*.*."+Context.getInstance().currentUser().getUsername(), "notification_topic_exchange");
+        System.out.println(notifReceiver.getRoutingKey());
         startReceiveTask(notifReceiver);
 
         startRPCTask("get_groups");
@@ -298,7 +315,7 @@ public class LobbyController implements Initializable {
                 root = loader.load();
                 Stage stage = new Stage();
                 Scene scene = new Scene(root);
-                stage.setTitle("Chat Group : "+groupName);
+                stage.setTitle(Context.getInstance().currentUser().getUsername()+" Chat Group : "+groupName);
                 stage.setScene(scene);
                 stage.show();
             } catch (Exception e){
@@ -317,7 +334,7 @@ public class LobbyController implements Initializable {
                 root = loader.load();
                 Stage stage = new Stage();
                 Scene scene = new Scene(root);
-                stage.setTitle("Chat Friend : "+friendName);
+                stage.setTitle(Context.getInstance().currentUser().getUsername()+" Chat Friend : "+friendName);
                 stage.setScene(scene);
                 stage.show();
 

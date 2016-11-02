@@ -33,8 +33,7 @@ public class ChatSender {
          }
     }
 
-    public void send(String username, String message) throws Exception {
-        message = username + " : " + message;
+    public void send(String message) throws Exception {
         channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
     }
 

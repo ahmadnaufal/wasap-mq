@@ -174,11 +174,16 @@ public class GroupChatController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        oMemberList = FXCollections.observableArrayList();
         if (Context.getInstance().currentUser().getFriendList() == null){
             ArrayList<String> tempList = new ArrayList<String>();
             tempList.add("Teman 1");
             tempList.add("Teman 2");
             Context.getInstance().currentUser().setFriendList(tempList);
+        }
+        if (oMemberList.isEmpty()){
+            oMemberList.add("A");
+            oMemberList.add("B");
         }
         oFriendList = FXCollections.observableArrayList(Context.getInstance().currentUser().getFriendList());
         memberList.setItems(oMemberList);
@@ -188,8 +193,13 @@ public class GroupChatController implements Initializable {
             groupName = "Dummy";
         }
 
-        ChatReceiver receiver = new ChatReceiver("localhost", "direct", "group_"+groupName, "message_exchange");
-        ChatSender sender = new ChatSender("localhost", "direct", "group_"+groupName, "message_exchange");
+        ChatReceiver receiver = new ChatReceiver("localhost", "direct", "group."+groupName, "message_exchange");
+        ChatSender sender = new ChatSender("localhost", "direct", "group."+groupName, "message_exchange");
+        ArrayList<ChatSender> memberNotifSender = new ArrayList<>();
+        for (String member : oMemberList){
+            ChatSender notifSender = new ChatSender("localhost", "topic", "notif.group."+groupName+"."+member, "notification_topic_exchange");
+            memberNotifSender.add(notifSender);
+        }
 
         startRPCTask("get_members");
 
@@ -197,7 +207,10 @@ public class GroupChatController implements Initializable {
 
         enterChatButton.setOnAction(event -> {
             try {
-                sender.send(Context.getInstance().currentUser().getUsername(), chatInputArea.getText());
+                sender.send(Context.getInstance().currentUser().getUsername()+" : "+chatInputArea.getText());
+                for (ChatSender notifSender : memberNotifSender){
+                    notifSender.send(groupName);
+                }
                 chatInputArea.clear();
             } catch (Exception e){
                 e.printStackTrace();

@@ -94,13 +94,18 @@ public class FriendChatController implements Initializable {
         if (friendName == null){
             friendName = "Dummy";
         }
-        ChatReceiver receiver = new ChatReceiver("localhost", "direct", friendName, "message_exchange");
-        ChatSender sender = new ChatSender("localhost", "direct", friendName, "message_exchange");
+        String username = Context.getInstance().currentUser().getUsername();
+        ChatReceiver receiver = new ChatReceiver("localhost", "direct", friendName+"."+username, "message_exchange");
+        ChatSender sender = new ChatSender("localhost", "direct", username+"."+friendName, "message_exchange");
+        ChatSender selfSender = new ChatSender("localhost", "direct", friendName+"."+username, "message_exchange");
+        ChatSender notifSender = new ChatSender("localhost", "topic", "notif.friend."+username+"."+friendName, "notification_topic_exchange");
 
         startReceiveTask(receiver);
         enterChatButton.setOnAction(event -> {
             try {
-                sender.send(Context.getInstance().currentUser().getUsername(), chatInputArea.getText());
+                sender.send(Context.getInstance().currentUser().getUsername()+" : "+chatInputArea.getText());
+                selfSender.send(Context.getInstance().currentUser().getUsername()+" : "+chatInputArea.getText());
+                notifSender.send(Context.getInstance().currentUser().getUsername());
                 chatInputArea.clear();
             } catch (Exception e){
                 e.printStackTrace();
