@@ -10,7 +10,7 @@ class Handler(object):
         response = {}
         retval, user = self.dbConn.getUser(username)
         if retval > 0:
-            if user[3] == password:
+            if user[2] == password:
                 response[KEY_RESPONSE_STATUS] = RESPONSE_STATUS_SUCCESS
             else:
                 response[KEY_RESPONSE_STATUS] = RESPONSE_STATUS_WRONG_LOGIN
@@ -26,7 +26,7 @@ class Handler(object):
         response = {}
         retval, user = self.dbConn.getUser(username)
         if retval > 0:
-            response[KEY_RESPONSE_STATUS] = RESPONSE_STATUS_DUPLICATE_USERNAME
+            response[KEY_RESPONSE_STATUS] = RESPONSE_STATUS_DUPLICATE
         elif retval == 0:
             user_id = self.dbConn.insertNewUser(username, password)
             if user_id > 0:
@@ -94,7 +94,7 @@ class Handler(object):
         retval, groups = self.dbConn.getUserGroups(username)
         if retval > 0:
             response[KEY_RESPONSE_STATUS] = RESPONSE_STATUS_SUCCESS
-            response[KEY_RESPONSE_LIST_GROUP] = groups
+            response[KEY_RESPONSE_LIST_GROUPS] = groups
         else:
             response[KEY_RESPONSE_STATUS] = RESPONSE_STATUS_ERROR
 
@@ -105,7 +105,7 @@ class Handler(object):
         retval, friends = self.dbConn.getUserFriends(username)
         if retval > 0:
             response[KEY_RESPONSE_STATUS] = RESPONSE_STATUS_SUCCESS
-            response[KEY_RESPONSE_LIST_GROUP] = friends
+            response[KEY_RESPONSE_LIST_FRIENDS] = friends
         else:
             response[KEY_RESPONSE_STATUS] = RESPONSE_STATUS_ERROR
 

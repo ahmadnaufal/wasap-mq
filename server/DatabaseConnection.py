@@ -15,7 +15,7 @@ class DatabaseConnection(object):
             query = '''
                 INSERT INTO {0}
                 ({1}, {2})
-                VALUES ({3}, {4})
+                VALUES ('{3}', '{4}')
             '''.format(TABLE_USERS, USERS_COLUMN_USERNAME, USERS_COLUMN_PASSWORD, username, password)
 
             cur.execute(query)
@@ -73,11 +73,11 @@ class DatabaseConnection(object):
             cur = con.cursor()
 
             query = """
-                SELECT * FROM ?
-                WHERE (? = ?)
-            """
+                SELECT * FROM {0}
+                WHERE ({1} = '{2}')
+            """.format(TABLE_USERS, USERS_COLUMN_USERNAME, username)
 
-            cur.execute(query, TABLE_USERS, USERS_COLUMN_USERNAME, username)
+            cur.execute(query)
 
             row = cur.fetchone()
             if row:
@@ -105,7 +105,7 @@ class DatabaseConnection(object):
             query = '''
                 INSERT INTO {0}
                 ({1})
-                VALUES ({2})
+                VALUES ('{2}')
             '''.format(TABLE_GROUPS, GROUPS_COLUMN_NAME, group_name)
 
             cur.execute(query)
@@ -164,7 +164,7 @@ class DatabaseConnection(object):
             query = '''
                 INSERT INTO {0}
                 ({1}, {2}, {3})
-                VALUES ({4}, {5}, {6})
+                VALUES ('{4}', '{5}', '{6}')
             '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_GROUPNAME, GROUPS_USER_COLUMN_USERNAME, GROUPS_USER_COLUMN_ROLE, username, groupname, role)
 
             cur.execute(query)
@@ -191,7 +191,7 @@ class DatabaseConnection(object):
 
             query = '''
                 DELETE FROM {0}
-                WHERE ({1} = {2}) AND ({3} = {4})
+                WHERE ({1} = '{2}') AND ({3} = '{4}')
             '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_GROUPNAME, groupname, GROUPS_USER_COLUMN_USERNAME, username)
 
             cur.execute(query)
@@ -244,15 +244,15 @@ class DatabaseConnection(object):
 
             query = '''
                 SELECT * FROM {0}
-                WHERE ({1} = {2})
+                WHERE ({1} = '{2}')
             '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_USERNAME, username)
 
             cur.execute(query)
             rows = cur.fetchall()
-            if rows:
-                retval = 1
-                for row in rows:
-                    groups.append(row[1])
+
+            retval = 1
+            for row in rows:
+                groups.append(row[1])
 
         except sqlite3.Error as e:
             if con:
@@ -275,7 +275,7 @@ class DatabaseConnection(object):
             query = '''
                 INSERT INTO {0}
                 ({1}, {2})
-                VALUES ({3}, {4})
+                VALUES ('{3}', '{4}')
             '''.format(TABLE_USERS_FRIEND, USERS_FRIEND_COLUMN_USERNAME_1, USERS_FRIEND_COLUMN_USERNAME_2, username_1, username_2)
 
             cur.execute(query)
@@ -303,17 +303,19 @@ class DatabaseConnection(object):
             cur = con.cursor()
 
             query = '''
-                SELECT DISTINCT * FROM {0}
-                WHERE ({1} = {2}) OR ({3} = {4})
+                SELECT * FROM {0}
+                WHERE ({1} = '{2}') OR ({3} = '{4}')
             '''.format(TABLE_USERS_FRIEND, USERS_FRIEND_COLUMN_USERNAME_1, username, USERS_FRIEND_COLUMN_USERNAME_2, username)
 
             cur.execute(query)
             rows = cur.fetchall()
-            if rows:
-                retval = 1
-                for row in rows:
-                    row.remove(username)
-                    friends.append(row[0])
+
+            retval = 1
+            for row in rows:
+                if row[0] == username:
+                    friends.append(str(row[1]))
+                else:
+                    friends.append(str(row[0]))
 
         except sqlite3.Error as e:
             if con:
