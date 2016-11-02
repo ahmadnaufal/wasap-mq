@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import model.ChatReceiver;
+import model.ChatSender;
 import model.Context;
 import model.DVaRPCClient;
 import org.json.simple.JSONArray;
@@ -188,6 +189,12 @@ public class LobbyController implements Initializable {
                 Platform.runLater(() -> {
                     Context.getInstance().currentUser().addFriendList(friendName);
                     refreshFriendList();
+                    ChatSender addFriendSender = new ChatSender("localhost","topic","notif.addFriend."+Context.getInstance().currentUser().getUsername()+"."+friendName, "notification_topic_exchange");
+                    try {
+                        addFriendSender.send("Added By : " + Context.getInstance().currentUser().getUsername());
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
                 });
             } else {
                 Platform.runLater(() -> {
@@ -266,7 +273,7 @@ public class LobbyController implements Initializable {
             public void handleDelivery(String consumerTag, Envelope envelope,
                                        AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
-                notifBar.appendText("New Message From : "+message+"\n");
+                notifBar.appendText(message+"\n");
                 System.out.println(" [x] Received '" + message + "'");
             }
         };

@@ -105,7 +105,7 @@ public class FriendChatController implements Initializable {
             try {
                 sender.send(Context.getInstance().currentUser().getUsername()+" : "+chatInputArea.getText());
                 selfSender.send(Context.getInstance().currentUser().getUsername()+" : "+chatInputArea.getText());
-                notifSender.send(Context.getInstance().currentUser().getUsername());
+                notifSender.send("New Message From : "+Context.getInstance().currentUser().getUsername());
                 chatInputArea.clear();
             } catch (Exception e){
                 e.printStackTrace();

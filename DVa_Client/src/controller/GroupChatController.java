@@ -209,7 +209,7 @@ public class GroupChatController implements Initializable {
             try {
                 sender.send(Context.getInstance().currentUser().getUsername()+" : "+chatInputArea.getText());
                 for (ChatSender notifSender : memberNotifSender){
-                    notifSender.send(groupName);
+                    notifSender.send("New Message in Group : "+groupName);
                 }
                 chatInputArea.clear();
             } catch (Exception e){
