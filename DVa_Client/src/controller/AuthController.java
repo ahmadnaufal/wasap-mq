@@ -21,7 +21,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.stage.Stage;
+import model.Context;
 import model.DVaRPCClient;
+import model.User;
 import org.json.simple.JSONObject;
 
 public class AuthController implements Initializable {
@@ -68,10 +70,10 @@ public class AuthController implements Initializable {
     {
         try {
             DVaRPCClient client = new DVaRPCClient("rpc_queue");
-
+            String username = usernameField.getText();
             JSONObject registerRequest = new JSONObject();
             registerRequest.put("method", "login");
-            registerRequest.put("username", usernameField.getText());
+            registerRequest.put("username", username);
             registerRequest.put("password", passwordField.getText());
 
             JSONObject response = client.call(registerRequest);
@@ -84,6 +86,7 @@ public class AuthController implements Initializable {
             } else {
                 // New FXML
                 Platform.runLater(() -> {
+                    Context.getInstance().currentUser().setUsername(username);
                     Parent root;
                     try {
                         root = FXMLLoader.load(getClass().getResource("../view/lobby.fxml"));

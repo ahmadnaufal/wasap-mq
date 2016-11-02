@@ -8,11 +8,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import model.User;
 
 import java.io.IOException;
 
 public class Main extends Application
 {
+
     public static void main(String[] args)
     {
         Application.launch(args);
