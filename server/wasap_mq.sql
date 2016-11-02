@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `groups` (
-  `id` int(3) NOT NULL,
+  `id` int(3) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
