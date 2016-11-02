@@ -1,5 +1,4 @@
 import DatabaseConnection as db
-import json
 from Constants import *
 
 class Handler(object):

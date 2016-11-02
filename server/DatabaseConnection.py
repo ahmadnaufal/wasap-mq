@@ -155,7 +155,7 @@ class DatabaseConnection(object):
 
             return user, retval
 
-    def addUserToGroup(self, user_id, group_id, role=ROLE_USER):
+    def addUserToGroup(self, username, groupname, role=ROLE_USER):
         retval = 0
         try:
             con = sqlite3.connect(self.dbname)
@@ -165,7 +165,7 @@ class DatabaseConnection(object):
                 INSERT INTO {0}
                 ({1}, {2}, {3})
                 VALUES ({4}, {5}, {6})
-            '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_GROUP_ID, GROUPS_USER_COLUMN_USER_ID, GROUPS_USER_COLUMN_ROLE, user_id, group_id, role)
+            '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_GROUPNAME, GROUPS_USER_COLUMN_USERNAME, GROUPS_USER_COLUMN_ROLE, username, groupname, role)
 
             cur.execute(query)
             con.commit()
@@ -183,7 +183,7 @@ class DatabaseConnection(object):
 
             return retval
 
-    def removeUserFromGroup(self, user_id, group_id):
+    def removeUserFromGroup(self, username, groupname):
         retval = 0
         try:
             con = sqlite3.connect(self.dbname)
@@ -192,7 +192,7 @@ class DatabaseConnection(object):
             query = '''
                 DELETE FROM {0}
                 WHERE ({1} = {2}) AND ({3} = {4})
-            '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_GROUP_ID, group_id, GROUPS_USER_COLUMN_USER_ID, user_id)
+            '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_GROUPNAME, groupname, GROUPS_USER_COLUMN_USERNAME, username)
 
             cur.execute(query)
             con.commit()
@@ -210,32 +210,32 @@ class DatabaseConnection(object):
 
             return retval
 
-    def getGroupMember(self, group_id):
-        retval = 0
-        try:
-            con = sqlite3.connect(self.dbname)
-            cur = con.cursor()
+    # def getGroupMember(self, group_id):
+    #     retval = 0
+    #     try:
+    #         con = sqlite3.connect(self.dbname)
+    #         cur = con.cursor()
 
-            query = '''
-                SELECT * FROM {0}
-                WHERE ({1} = {2})
-            '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_GROUP_ID, group_id)
+    #         query = '''
+    #             SELECT * FROM {0}
+    #             WHERE ({1} = {2})
+    #         '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_GROUP_ID, group_id)
 
-            cur.execute(query)
-            rows = cur.fetchall()
-        except sqlite3.Error as e:
-            if con:
-                con.rollback()
+    #         cur.execute(query)
+    #         rows = cur.fetchall()
+    #     except sqlite3.Error as e:
+    #         if con:
+    #             con.rollback()
 
-            print "Error %s:" % e.args[1]
-            retval = -1
-        finally:
-            if con:
-                con.close()
+    #         print "Error %s:" % e.args[1]
+    #         retval = -1
+    #     finally:
+    #         if con:
+    #             con.close()
 
-            return retval
+    #         return retval
 
-    def getUserGroups(self, user_id):
+    def getUserGroups(self, username):
         retval = 0
         groups = []
         try:
@@ -245,13 +245,14 @@ class DatabaseConnection(object):
             query = '''
                 SELECT * FROM {0}
                 WHERE ({1} = {2})
-            '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_USER_ID, user_id)
+            '''.format(TABLE_GROUPS_USER, GROUPS_USER_COLUMN_USERNAME, username)
 
             cur.execute(query)
             rows = cur.fetchall()
             if rows:
-                groups = rows
                 retval = 1
+                for row in rows:
+                    groups.append(row[1])
 
         except sqlite3.Error as e:
             if con:
@@ -265,7 +266,7 @@ class DatabaseConnection(object):
 
             return retval, groups
 
-    def addFriend(self, user_id_1, user_id_2):
+    def addFriend(self, username_1, username_2):
         retval = 0
         try:
             con = sqlite3.connect(self.dbname)
@@ -275,7 +276,7 @@ class DatabaseConnection(object):
                 INSERT INTO {0}
                 ({1}, {2})
                 VALUES ({3}, {4})
-            '''.format(TABLE_USERS_FRIEND, USERS_FRIEND_COLUMN_USER_ID_1, USERS_FRIEND_COLUMN_USER_ID_2, user_id_1, user_id_2)
+            '''.format(TABLE_USERS_FRIEND, USERS_FRIEND_COLUMN_USERNAME_1, USERS_FRIEND_COLUMN_USERNAME_2, username_1, username_2)
 
             cur.execute(query)
             con.commit()
@@ -294,7 +295,7 @@ class DatabaseConnection(object):
             return retval
 
     # TODO: DISTINCT FRIENDS
-    def getUserFriends(self, user_id):
+    def getUserFriends(self, username):
         retval = 0
         friends = []
         try:
@@ -302,15 +303,18 @@ class DatabaseConnection(object):
             cur = con.cursor()
 
             query = '''
-                SELECT * FROM {0}
-                WHERE ({1} = {2})
-            '''.format(TABLE_USERS_FRIEND, USERS_FRIEND_COLUMN_USER_ID_1, user_id)
+                SELECT DISTINCT * FROM {0}
+                WHERE ({1} = {2}) OR ({3} = {4})
+            '''.format(TABLE_USERS_FRIEND, USERS_FRIEND_COLUMN_USERNAME_1, username, USERS_FRIEND_COLUMN_USERNAME_2, username)
 
             cur.execute(query)
             rows = cur.fetchall()
             if rows:
-                friends = rows
                 retval = 1
+                for row in rows:
+                    row.remove(username)
+                    friends.append(row[0])
+
         except sqlite3.Error as e:
             if con:
                 con.rollback()
