@@ -69,40 +69,55 @@ public class AuthController implements Initializable {
     public void runLoginTask(Event e)
     {
         try {
-            DVaRPCClient client = new DVaRPCClient("rpc_queue");
-            String username = usernameField.getText();
-            JSONObject registerRequest = new JSONObject();
-            registerRequest.put("method", "login");
-            registerRequest.put("username", username);
-            registerRequest.put("password", passwordField.getText());
-
-            JSONObject response = client.call(registerRequest);
-            if(response.get("status") == "wrong"){
-                Platform.runLater(() -> {
-                    wrongAuthLabel.setVisible(true);
-                    duplicateUsernameLabel.setVisible(false);
-                    registerSuccessLabel.setVisible(false);
-                });
-            } else {
-                // New FXML
-                Platform.runLater(() -> {
-                    Context.getInstance().currentUser().setUsername(username);
-                    Parent root;
-                    try {
-                        root = FXMLLoader.load(getClass().getResource("../view/lobby.fxml"));
-                        Stage stage = new Stage();
-                        Scene scene = new Scene(root);
-                        stage.setTitle("Lobby");
-                        stage.setScene(scene);
-                        stage.show();
-                        ((Node)(e.getSource())).getScene().getWindow().hide();
-                    } catch (IOException exc) {
-                        exc.printStackTrace();
-                    }
-                });
-            }
-
-            client.close();
+//            DVaRPCClient client = new DVaRPCClient("rpc_queue");
+//            String username = usernameField.getText();
+//            JSONObject registerRequest = new JSONObject();
+//            registerRequest.put("method", "login");
+//            registerRequest.put("username", username);
+//            registerRequest.put("password", passwordField.getText());
+//
+//            JSONObject response = client.call(registerRequest);
+//            if(response.get("status") == "wrong"){
+//                Platform.runLater(() -> {
+//                    wrongAuthLabel.setVisible(true);
+//                    duplicateUsernameLabel.setVisible(false);
+//                    registerSuccessLabel.setVisible(false);
+//                });
+//            } else {
+//                // New FXML
+//                Platform.runLater(() -> {
+//                    Context.getInstance().currentUser().setUsername(username);
+//                    Parent root;
+//                    try {
+//                        root = FXMLLoader.load(getClass().getResource("../view/lobby.fxml"));
+//                        Stage stage = new Stage();
+//                        Scene scene = new Scene(root);
+//                        stage.setTitle("Lobby");
+//                        stage.setScene(scene);
+//                        stage.show();
+//                        ((Node)(e.getSource())).getScene().getWindow().hide();
+//                    } catch (IOException exc) {
+//                        exc.printStackTrace();
+//                    }
+//                });
+//            }
+//            client.close();
+            Platform.runLater(() -> {
+                String username = usernameField.getText();
+                Context.getInstance().currentUser().setUsername(username);
+                Parent root;
+                try {
+                    root = FXMLLoader.load(getClass().getResource("../view/lobby.fxml"));
+                    Stage stage = new Stage();
+                    Scene scene = new Scene(root);
+                    stage.setTitle("Lobby");
+                    stage.setScene(scene);
+                    stage.show();
+                    ((Node)(e.getSource())).getScene().getWindow().hide();
+                } catch (IOException exc) {
+                    exc.printStackTrace();
+                }
+            });
         } catch (Exception ex){
             ex.printStackTrace();
         }

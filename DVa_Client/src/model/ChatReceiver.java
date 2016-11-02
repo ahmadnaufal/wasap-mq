@@ -10,6 +10,46 @@ import java.util.ArrayList;
  */
 public class ChatReceiver {
 
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public String getExchangeName() {
+        return exchangeName;
+    }
+
+    public void setExchangeName(String exchangeName) {
+        this.exchangeName = exchangeName;
+    }
+
+    public String getRoutingKey() {
+        return routingKey;
+    }
+
+    public void setRoutingKey(String routingKey) {
+        this.routingKey = routingKey;
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    public String getQueueName() {
+        return queueName;
+    }
+
+    public void setQueueName(String queueName) {
+        this.queueName = queueName;
+    }
+
     private Channel channel;
     private String exchangeName;
     private String routingKey;
@@ -50,19 +90,19 @@ public class ChatReceiver {
         }
     }
 
-    public void startConsume() throws Exception {
-
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-        Consumer consumer = new DefaultConsumer(channel) {
-            @Override
-            public void handleDelivery(String consumerTag, Envelope envelope,
-                                       AMQP.BasicProperties properties, byte[] body) throws IOException {
-                String message = new String(body, "UTF-8");
-                messages.add(message);
-                System.out.println(" [x] Received '" + message + "'");
-            }
-        };
-        channel.basicConsume(queueName, true, consumer);
-    }
+//    public void startConsume() throws Exception {
+//
+//        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+//        Consumer consumer = new DefaultConsumer(channel) {
+//            @Override
+//            public void handleDelivery(String consumerTag, Envelope envelope,
+//                                       AMQP.BasicProperties properties, byte[] body) throws IOException {
+//                String message = new String(body, "UTF-8");
+//                messages.add(message);
+//                System.out.println(" [x] Received '" + message + "'");
+//            }
+//        };
+//        channel.basicConsume(queueName, true, consumer);
+//    }
 
 }

@@ -33,7 +33,7 @@ public class Main extends Application
         // Set the Scene to the Stage
         stage.setScene(scene);
         // Set the Title to the Stage
-        stage.setTitle("myWekaExplorer");
+        stage.setTitle("DVa Messaging");
         // Display the Stage
         stage.show();
 

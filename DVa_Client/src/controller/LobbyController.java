@@ -86,7 +86,7 @@ public class LobbyController implements Initializable {
         try {
             Platform.runLater(() -> {
                 try {
-                    receiver.startConsume();
+                    //receiver.startConsume();
                 } catch (Exception exc) {
                     exc.printStackTrace();
                 }
@@ -235,7 +235,6 @@ public class LobbyController implements Initializable {
             JSONObject response = client.call(request);
             if(response.get("status") == "ok"){
                 Platform.runLater(() -> {
-                    JSONArray list = new JSONArray();
                     ArrayList<String> responseFriendList = (JSONArray) response.get("friends");
                     Context.getInstance().currentUser().setFriendList(responseFriendList);
                     refreshFriendList();
@@ -252,12 +251,10 @@ public class LobbyController implements Initializable {
 
     public void refreshGroupList() {
         oGroupList = FXCollections.observableArrayList(Context.getInstance().currentUser().getGroupList());
-        groupList.setItems(oGroupList);
     }
 
     public void refreshFriendList() {
         oFriendList = FXCollections.observableArrayList(Context.getInstance().currentUser().getFriendList());
-        friendList.setItems(oFriendList);
     }
 
     @Override
@@ -265,6 +262,13 @@ public class LobbyController implements Initializable {
         // Handle Create group, add friend, left group (RPC)
         // Handle notifikasi chat dan pemberitahuan penambahan teman?? << gimana caranya?
         // Bikin receiver notifikasi?
+
+//        oFriendList = FXCollections.observableArrayList("cobain","ah");
+//        oGroupList =  FXCollections.observableArrayList("group1","group2");
+
+        friendList.setItems(oFriendList);
+        groupList.setItems(oGroupList);
+
         ChatReceiver notifReceiver = new ChatReceiver("localhost", "direct", "notification"+"."+ Context.getInstance().currentUser().getUsername(), "notification_exchange");
         startReceiveTask(notifReceiver);
 
@@ -283,10 +287,49 @@ public class LobbyController implements Initializable {
             startRPCTask("add_friend");
         });
 
+        chatGroupButton.setOnAction(event -> {
+            String groupName = groupList.getSelectionModel().getSelectedItem();
+            Parent root;
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/groupchatroom.fxml"));
+                GroupChatController controller = new GroupChatController();
+                controller.setGroupName(groupName);
+                loader.setController(controller);
+                root = loader.load();
+                Stage stage = new Stage();
+                Scene scene = new Scene(root);
+                stage.setTitle("Chat Group : "+groupName);
+                stage.setScene(scene);
+                stage.show();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        });
+
+        chatFriendButton.setOnAction(event -> {
+            String friendName = friendList.getSelectionModel().getSelectedItem();
+            Parent root;
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/chatroom.fxml"));
+                FriendChatController controller = new FriendChatController();
+                controller.setFriendName(friendName);
+                loader.setController(controller);
+                root = loader.load();
+                Stage stage = new Stage();
+                Scene scene = new Scene(root);
+                stage.setTitle("Chat Friend : "+friendName);
+                stage.setScene(scene);
+                stage.show();
+
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        });
+
 
 
         // Bikin windows baru jika memencet button chat, kirim parameter username/nama group,
-        // biar jadi parameter untuk chatreceiver dan chatsender di windows selanjutnya (ChatController.java)
+        // biar jadi parameter untuk chatreceiver dan chatsender di windows selanjutnya
 
     }
 
