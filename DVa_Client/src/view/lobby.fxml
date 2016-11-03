@@ -22,6 +22,7 @@
                         <Button fx:id="leftGroupButton" layoutX="456.0" layoutY="187.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="128.0" text="Left Group" />
                         <Button fx:id="chatGroupButton" layoutX="456.0" layoutY="235.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="128.0" text="Chat" />
                         <TextField fx:id="createGroupField" layoutX="456.0" layoutY="106.0" prefHeight="25.0" prefWidth="128.0" />
+                        <Button fx:id="refreshGroupButton" layoutX="456.0" layoutY="53.0" mnemonicParsing="false" prefWidth="128.0" text="Refresh" />
                      </children>
                   </AnchorPane>
             </content>
@@ -34,6 +35,7 @@
                         <Button fx:id="addFriendButton" layoutX="456.0" layoutY="144.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="128.0" text="Add Friend" />
                         <Button fx:id="chatFriendButton" layoutX="456.0" layoutY="235.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="128.0" text="Chat" />
                         <TextField fx:id="addFriendField" layoutX="456.0" layoutY="106.0" prefHeight="25.0" prefWidth="128.0" />
+                        <Button fx:id="refreshFriendButton" layoutX="456.0" layoutY="57.0" mnemonicParsing="false" prefWidth="128.0" text="Refresh" />
                      </children>
                   </AnchorPane>
                </content>

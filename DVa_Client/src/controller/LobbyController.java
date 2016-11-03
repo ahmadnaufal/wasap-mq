@@ -62,6 +62,12 @@ public class LobbyController implements Initializable {
     private Button chatFriendButton;
 
     @FXML
+    private Button refreshGroupButton;
+
+    @FXML
+    private Button refreshFriendButton;
+
+    @FXML
     private TextField addFriendField;
 
     @FXML
@@ -311,6 +317,8 @@ public class LobbyController implements Initializable {
             startRPCTask("add_friend");
         });
 
+
+
         chatGroupButton.setOnAction(event -> {
             String groupName = groupList.getSelectionModel().getSelectedItem();
             Parent root;
@@ -348,6 +356,14 @@ public class LobbyController implements Initializable {
             } catch (Exception e){
                 e.printStackTrace();
             }
+        });
+
+        refreshFriendButton.setOnAction(event -> {
+            startRPCTask("get_friends");
+        });
+
+        refreshGroupButton.setOnAction(event -> {
+            startRPCTask("get_groups");
         });
 
 
